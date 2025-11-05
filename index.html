@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Mary 🌹</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2c0b0e, #000000, #5a0a14);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Player de música discreto */
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(139, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid #FF69B4;
+        }
+
+        .music-player.show {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .music-note {
+            font-size: 1rem;
+            animation: musicFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes musicFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* ENVELOPE FECHADO */
+        .envelope-closed {
+            width: 320px;
+            height: 220px;
+            background: linear-gradient(135deg, #8B0000, #500000);
+            border-radius: 15px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.5s ease;
+            border: 2px solid #FF69B4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        .envelope-closed:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 
+                0 20px 40px rgba(139, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .envelope-closed::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 40px solid #8B0000;
+            filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .envelope-closed::after {
+            content: "💌";
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .envelope-title {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .envelope-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .click-instruction {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* CARTA ABERTA */
+        .letter-container {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid #8B0000;
+            position: relative;
+            overflow: hidden;
+            display: none;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .letter-header {
+            background: linear-gradient(90deg, #8B0000, #000000);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .letter-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .letter-header::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 5%;
+            width: 90%;
+            height: 2px;
+            background: #FF69B4;
+            border-radius: 50%;
+        }
+
+        .floating-heart {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+            color: #FF69B4;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .letter-content {
+            padding: 35px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .greeting {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #8B0000;
+            font-weight: 600;
+        }
+
+        .intro {
+            margin-bottom: 30px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .qualities-section {
+            margin: 30px 0;
+            padding: 20px;
+            border-left: 4px solid;
+            border-radius: 8px;
+            background: rgba(139, 0, 0, 0.05);
+        }
+
+        .strength { border-color: #8B0000; }
+        .mind { border-color: #000000; }
+        .heart { border-color: #FF69B4; }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .strength .section-title { color: #8B0000; }
+        .mind .section-title { color: #000000; }
+        .heart .section-title { color: #FF69B4; }
+
+        .qualities-list {
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        .qualities-list li {
+            margin: 12px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .qualities-list li::before {
+            content: "❤️";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.9rem;
+        }
+
+        .invitation {
+            background: linear-gradient(135deg, #FF69B4, #8B0000);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(139, 0, 0, 0.2);
+        }
+
+        .invitation p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .ps {
+            font-style: italic;
+            color: #666;
+            border-top: 1px dashed #8B0000;
+            padding-top: 20px;
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            opacity: 0.1;
+        }
+
+        .corner-1 { top: -20px; left: -20px; background: #8B0000; border-radius: 50%; }
+        .corner-2 { bottom: -20px; right: -20px; background: #FF69B4; border-radius: 50%; }
+
+        @media (max-width: 600px) {
+            .letter-content { padding: 25px; }
+            .letter-header h1 { font-size: 1.5rem; }
+            .qualities-section { padding: 15px; }
+            .envelope-closed {
+                width: 280px;
+                height: 200px;
+            }
+            .music-player {
+                top: 10px;
+                right: 10px;
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Player de Música -->
+    <div class="music-player" id="musicPlayer">
+        <span class="music-note">🎵</span>
+        <span>Música especial</span>
+    </div>
+
+    <!-- Áudio (oculto) -->
+    <audio id="backgroundMusic" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- ENVELOPE FECHADO -->
+    <div class="envelope-closed" id="envelopeClosed">
+        <div class="envelope-title">Para Mary</div>
+        <div class="envelope-subtitle">Algo especial para você</div>
+        <div class="click-instruction">Clique para abrir</div>
+    </div>
+
+    <!-- CARTA ABERTA -->
+    <div class="letter-container" id="letterContainer">
+        <div class="corner-decoration corner-1"></div>
+        <div class="corner-decoration corner-2"></div>
+        
+        <div class="letter-header">
+            <div class="floating-heart">💖</div>
+            <h1>Para Mary</h1>
+            <p>Minha inspiração diária</p>
+        </div>
+
+        <div class="letter-content">
+            <p class="greeting">Querida Mary,</p>
+            
+            <p class="intro">
+                Essas semanas de silêncio foram sobre respeito - ao seu tempo, ao seu foco no ENEM, à sua jornada. 
+                Cada dia longe me mostrou o quanto o que temos é raro.
+            </p>
+
+            <div class="qualities-section strength">
+                <div class="section-title">
+                    <span>💪</span>
+                    <h3>SUA FORÇA ME INSPIRA</h3>
+                </div>
+                <ul class="qualities-list">
+                    <li>A coragem de equilibrar estágio, estudos e vida pessoal</li>
+                    <li>A resiliência sob pressão que poucos teriam</li>
+                    <li>A determinação que é exemplo para qualquer um</li>
+                </ul>
+            </div>
+
+            <div class="qualities-section mind">
+                <div class="section-title">
+                    <span>🎯</span>
+                    <h3>SUA MENTE ME ENCANTA</h3>
+                </div>
+                <ul class="qualities-list">
+                    <li>A disciplina que você tem com seus objetivos</li>
+                    <li>A inteligência emocional que transborda em cada conversa</li>
+                    <li>A maturidade que vai além dos seus anos</li>
+                </ul>
+            </div>
+
+            <div class="qualities-section heart">
+                <div class="section-title">
+                    <span>❤️</span>
+                    <h3>SEU CORAÇÃO ME CONQUISTA</h3>
+                </div>
+                <ul class="qualities-list">
+                    <li>O senso de humor que ilumina até os dias cinzas</li>
+                    <li>A lealdade incondicional a quem ama</li>
+                    <li>A sensibilidade que torna cada conversa especial</li>
+                </ul>
+            </div>
+
+            <div class="invitation">
+                <p>Por tudo isso e muito mais que palavras não alcançam,</p>
+                <p><strong>gostaria de recomeçar.</strong></p>
+                <p>Não como antes, mas com a calma e respeito que merecemos.</p>
+                
+                <br>
+                
+                <p>Que tal um açaí para passarmos um tempo de qualidade juntos?</p>
+                <p><em>Dois redescobertos se reencontrando, sem pressões, sem expectativas.</em></p>
+            </div>
+
+            <div class="ps">
+                <p>P.S.: Se não for o momento, entenderei perfeitamente.<br>
+                Seu bem-estar sempre virá primeiro.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('envelopeClosed').addEventListener('click', function() {
+            // Configurar e tocar música
+            const music = document.getElementById('backgroundMusic');
+            music.volume = 0.3; // 30% de volume
+            music.play().catch(e => {
+                console.log('Reprodução automática bloqueada pelo navegador:', e);
+            });
+
+            // Mostrar player de música
+            document.getElementById('musicPlayer').classList.add('show');
+
+            // Esconde o envelope com animação
+            this.style.opacity = '0';
+            this.style.transform = 'scale(0.8)';
+            
+            // Mostra a carta após um pequeno delay
+            setTimeout(function() {
+                document.getElementById('envelopeClosed').style.display = 'none';
+                document.getElementById('letterContainer').style.display = 'block';
+            }, 300);
+        });
+
+        // Controle de música quando a página perde foco
+        document.addEventListener('visibilitychange', function() {
+            const music = document.getElementById('backgroundMusic');
+            if (document.hidden) {
+                music.pause();
+            } else if (document.getElementById('letterContainer').style.display === 'block') {
+                music.play().catch(e => console.log('Erro ao retomar música:', e));
+            }
+        });
+
+        // Efeito de digitação opcional (pode remover se não quiser)
+        document.addEventListener('DOMContentLoaded', function() {
+            const envelope = document.getElementById('envelopeClosed');
+            envelope.style.animation = 'none';
+            setTimeout(() => {
+                envelope.style.animation = '';
+            }, 10);
+        });
+    </script>
+</body>
+</html>
